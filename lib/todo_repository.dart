@@ -14,11 +14,23 @@ class TodoRepositoryImpl implements TodoRepository {
 
   @override
   Future<List<Todo>> fetchAll() async {
-    throw UnimplementedError();
+    final snapshot = await _db.collection('todos').get();
+    return snapshot.docs
+        .map(
+          (doc) => Todo(
+            id: doc.id,
+            title: doc['title'] as String,
+            isDone: doc['isDone'] as bool? ?? false,
+          ),
+        )
+        .toList();
   }
 
   @override
   Future<void> add(Todo todo) async {
-    throw UnimplementedError();
+    await _db.collection('todos').doc(todo.id).set({
+      'title': todo.title,
+      'isDone': todo.isDone,
+    });
   }
 }
